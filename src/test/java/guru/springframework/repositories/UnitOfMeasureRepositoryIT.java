@@ -2,9 +2,6 @@ package guru.springframework.repositories;
 
 import guru.springframework.bootstrap.RecipeBootstrap;
 import guru.springframework.domain.UnitOfMeasure;
-import guru.springframework.repositories.reactive.CategoryReactiveRepository;
-import guru.springframework.repositories.reactive.RecipeReactiveRepository;
-import guru.springframework.repositories.reactive.UnitOfMeasureReactiveRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +16,6 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by jt on 6/17/17.
  */
-
 @RunWith(SpringRunner.class)
 @DataMongoTest
 public class UnitOfMeasureRepositoryIT {

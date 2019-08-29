@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.swing.*;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest
@@ -25,9 +23,9 @@ public class RecipeReactiveRepositoryTest {
     }
 
     @Test
-    public void testRecipeSave() {
+    public void testRecipeSave() throws Exception {
         Recipe recipe = new Recipe();
-        recipe.setDescription("Dummy");
+        recipe.setDescription("Yummy");
 
         recipeReactiveRepository.save(recipe).block();
 

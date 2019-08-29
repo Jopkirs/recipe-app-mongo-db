@@ -7,7 +7,6 @@ import guru.springframework.domain.Recipe;
 import guru.springframework.repositories.reactive.RecipeReactiveRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -18,12 +17,12 @@ import reactor.core.publisher.Mono;
 @Service
 public class RecipeServiceImpl implements RecipeService {
 
-    private final RecipeReactiveRepository recipeRepository;
+    private final RecipeReactiveRepository recipeReactiveRepository;
     private final RecipeCommandToRecipe recipeCommandToRecipe;
     private final RecipeToRecipeCommand recipeToRecipeCommand;
 
-    public RecipeServiceImpl(RecipeReactiveRepository recipeRepository, RecipeCommandToRecipe recipeCommandToRecipe, RecipeToRecipeCommand recipeToRecipeCommand) {
-        this.recipeRepository = recipeRepository;
+    public RecipeServiceImpl(RecipeReactiveRepository recipeReactiveRepository, RecipeCommandToRecipe recipeCommandToRecipe, RecipeToRecipeCommand recipeToRecipeCommand) {
+        this.recipeReactiveRepository = recipeReactiveRepository;
         this.recipeCommandToRecipe = recipeCommandToRecipe;
         this.recipeToRecipeCommand = recipeToRecipeCommand;
     }
@@ -31,21 +30,18 @@ public class RecipeServiceImpl implements RecipeService {
     @Override
     public Flux<Recipe> getRecipes() {
         log.debug("I'm in the service");
-
-        return recipeRepository.findAll();
+        return recipeReactiveRepository.findAll();
     }
 
     @Override
     public Mono<Recipe> findById(String id) {
-
-        return recipeRepository.findById(id);
+        return recipeReactiveRepository.findById(id);
     }
 
     @Override
-    @Transactional
     public Mono<RecipeCommand> findCommandById(String id) {
 
-        return recipeRepository.findById(id)
+       return recipeReactiveRepository.findById(id)
                 .map(recipe -> {
                     RecipeCommand recipeCommand = recipeToRecipeCommand.convert(recipe);
 
@@ -58,15 +54,15 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    @Transactional
-    public Mono<RecipeCommand> saveRecipeCommand(RecipeCommand command) {
-        return recipeRepository.save(recipeCommandToRecipe.convert(command))
+    public Mono<RecipeCommand>  saveRecipeCommand(RecipeCommand command) {
+
+        return recipeReactiveRepository.save(recipeCommandToRecipe.convert(command))
                 .map(recipeToRecipeCommand::convert);
     }
 
     @Override
     public Mono<Void> deleteById(String idToDelete) {
-        recipeRepository.deleteById(idToDelete).block();
+        recipeReactiveRepository.deleteById(idToDelete).block();
 
         return Mono.empty();
     }

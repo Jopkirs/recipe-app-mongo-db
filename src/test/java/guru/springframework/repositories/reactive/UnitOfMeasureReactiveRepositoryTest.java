@@ -1,10 +1,6 @@
 package guru.springframework.repositories.reactive;
 
-import guru.springframework.bootstrap.RecipeBootstrap;
 import guru.springframework.domain.UnitOfMeasure;
-import guru.springframework.repositories.CategoryRepository;
-import guru.springframework.repositories.RecipeRepository;
-import guru.springframework.repositories.UnitOfMeasureRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,17 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @DataMongoTest
 public class UnitOfMeasureReactiveRepositoryTest {
 
-
     public static final String EACH = "Each";
+
     @Autowired
     UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository;
-
 
     @Before
     public void setUp() throws Exception {
@@ -30,27 +25,28 @@ public class UnitOfMeasureReactiveRepositoryTest {
     }
 
     @Test
-    public void testSaveUom() {
-        UnitOfMeasure unitOfMeasure = new UnitOfMeasure();
-        unitOfMeasure.setDescription(EACH);
+    public void testSaveUom() throws Exception {
+        UnitOfMeasure uom = new UnitOfMeasure();
+        uom.setDescription(EACH);
 
-        unitOfMeasureReactiveRepository.save(unitOfMeasure).block();
+        unitOfMeasureReactiveRepository.save(uom).block();
 
         Long count = unitOfMeasureReactiveRepository.count().block();
 
         assertEquals(Long.valueOf(1L), count);
+
     }
 
     @Test
-    public void testFindByDesciption() {
-        UnitOfMeasure unitOfMeasure = new UnitOfMeasure();
-        unitOfMeasure.setDescription(EACH);
+    public void testFindByDescription() throws Exception {
+        UnitOfMeasure uom = new UnitOfMeasure();
+        uom.setDescription(EACH);
 
-        unitOfMeasureReactiveRepository.save(unitOfMeasure).block();
+        unitOfMeasureReactiveRepository.save(uom).block();
 
-        UnitOfMeasure fetchedUnitOfMeasure = unitOfMeasureReactiveRepository.findByDescription(EACH).block();
+        UnitOfMeasure fetchedUOM = unitOfMeasureReactiveRepository.findByDescription(EACH).block();
 
-        assertNotNull(fetchedUnitOfMeasure.getDescription());
-        assertEquals(EACH, fetchedUnitOfMeasure.getDescription());
+        assertEquals(EACH, fetchedUOM.getDescription());
+
     }
 }
