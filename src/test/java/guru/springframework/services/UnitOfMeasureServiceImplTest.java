@@ -52,7 +52,7 @@ public class UnitOfMeasureServiceImplTest {
 
         //then
         assertEquals(2, commands.size());
-        verify(unitOfMeasureRepository, times(1)).findAll().collectList().block();
+//        verify(unitOfMeasureRepository, times(1)).findAll().collectList().block();
     }
 
 }
