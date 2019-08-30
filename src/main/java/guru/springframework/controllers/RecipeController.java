@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
@@ -22,6 +24,8 @@ public class RecipeController {
     private static final String RECIPE_RECIPEFORM_URL = "recipe/recipeform";
     private final RecipeService recipeService;
 
+    private WebDataBinder webDataBinder;
+
     public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }
@@ -29,9 +33,14 @@ public class RecipeController {
     @GetMapping("/recipe/{id}/show")
     public String showById(@PathVariable String id, Model model){
 
-        model.addAttribute("recipe", recipeService.findById(id).block());
+        model.addAttribute("recipe", recipeService.findById(id));
 
         return "recipe/show";
+    }
+
+    @InitBinder
+    public void initBuilder(WebDataBinder webDataBinder){
+        this.webDataBinder = webDataBinder;
     }
 
     @GetMapping("recipe/new")
@@ -48,7 +57,9 @@ public class RecipeController {
     }
 
     @PostMapping("recipe")
-    public String saveOrUpdate(@Valid @ModelAttribute("recipe") RecipeCommand command, BindingResult bindingResult){
+    public String saveOrUpdate(@Valid @ModelAttribute("recipe") RecipeCommand command){
+        webDataBinder.validate();
+        BindingResult bindingResult = webDataBinder.getBindingResult();
 
         if(bindingResult.hasErrors()){
 
@@ -59,9 +70,9 @@ public class RecipeController {
             return RECIPE_RECIPEFORM_URL;
         }
 
-        RecipeCommand savedCommand = recipeService.saveRecipeCommand(command).block();
+        Mono<RecipeCommand> savedCommand = recipeService.saveRecipeCommand(command);
 
-        return "redirect:/recipe/" + savedCommand.getId() + "/show";
+        return "redirect:/recipe/" + savedCommand.block().getId() + "/show";
     }
 
     @GetMapping("recipe/{id}/delete")
